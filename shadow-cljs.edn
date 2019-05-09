@@ -1,0 +1,9 @@
+{:source-paths ["src/dev"
+                "src/"]
+ :deps         true
+ :builds
+ {:frontend
+  {:target :browser
+   :modules {:main {:init-fn pipes.core/init}}
+   :devtools {:http-root "public"
+              :http-port 8080}}}}

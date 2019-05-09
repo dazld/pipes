@@ -1,0 +1,8 @@
+node_modules
+target
+public/js
+.shadow-cljs
+.idea
+.cpcache
+.nrepl-port
+
