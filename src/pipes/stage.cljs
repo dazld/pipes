@@ -14,15 +14,22 @@
                      :gammaInput true
                      :gammaOutput true
                      :toneMapping three/ReinhardToneMapping
-                     :toneMappingExposure (Math/pow 1.4 5.0))
+                     :toneMappingExposure (Math/pow 0.4 1.0))
            (-> (j/get :domElement) (->> (.appendChild (.-root js/window))))))
 
+(defn light [scene x y z]
+  (let [l (three/DirectionalLight. 0xffffff 0.7)]
+    (j/update! l :position j/call :set x y z)
+    (.add scene l)))
+
 (defonce ^:export scene
-         (three/Scene.))
+         (doto (three/Scene.)
+           (light 1 1 1)
+           (light 0 0 1)))
 
 (def ^:export camera
-  (doto (three/PerspectiveCamera. 75 (/ (.-innerWidth js/window) (.-innerHeight js/window)) 0.1 1000)
-    (j/update! :position j/call :set 0 0 70)
+  (doto (three/PerspectiveCamera. 60 (/ (.-innerWidth js/window) (.-innerHeight js/window)) 0.1 2000)
+    (j/update! :position j/call :set 0 0 700)
     (.lookAt (three/Vector3.))))
 
 ;; effects composer for after effects
@@ -30,20 +37,12 @@
   (let [w (j/get js/window :innerWidth)
         h (j/get js/window :innerHeight)]
     (doto (three/EffectComposer. renderer)
-      (.addPass (three/RenderPass. scene camera))
-      (.addPass (three/UnrealBloomPass. (three/Vector2. w h) ; viewport resolution
-                                        0.3   ; strength
-                                        0.2   ; radius
-                                        0.8)) ; threshold
-      (.addPass (j/assoc! (three/FilmPass. 0.25  ; noise intensity
-                                           0.26  ; scanline intensity
-                                           648   ; scanline count
-                                           false); grayscale
+      (.addPass (j/assoc! (three/RenderPass. scene camera)
                           :renderToScreen true)))))
 
 (defn resize-renderer! []
-  (let [w (.-innerWidth js/window)
-        h (.-innerHeight js/window)]
+  (let [w (j/get js/window :innerWidth)
+        h (j/get js/window :innerHeight)]
     (j/assoc! camera :aspect (/ w h))
     (.updateProjectionMatrix camera)
     (.setSize renderer w h)))
