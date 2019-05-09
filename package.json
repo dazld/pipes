@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "bezier-easing": "^2.1.0",
+    "easing": "^1.2.1",
     "postprocessing": "^6.3.2",
     "three-full": "^17.1.0"
   },
